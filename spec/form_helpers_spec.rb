@@ -2,15 +2,15 @@ require File.expand_path 'spec_helper', File.dirname(__FILE__)
 
 # class Application < Sinatra::Base
 #   register Sinatra::FormHelpers
-# 
+#
 #   set :raise_errors, false
 #   set :show_exceptions, false
-#   
+#
 #   get '/link' do
-#     
+#
 #   end
 # end
-# 
+#
 # class Bacon::Context
 #   include Rack::Test::Methods
 #   def app
@@ -38,7 +38,7 @@ describe "Sinatra::FormHelpers methods" do
     fh.form(:person, :create) do |f|
       # f.input(:first_name)
       f.input(:last_name)
-    end.should == '<form action="/person" method="POST"><fieldset>' + 
+    end.should == '<form action="/person" method="POST"><fieldset>' +
       # '<input id="person_first_name" name="person[first_name]" type="text" />' +
       '<input id="person_last_name" name="person[last_name]" type="text" />' +
       '</fieldset></form>'
@@ -83,7 +83,7 @@ describe "Sinatra::FormHelpers methods" do
   end
   it 'supports multiple values for checkboxes' do
     fh.params = {:user => {'devices' => ['iPhone', 'iPad'] }}
-    fh.checkbox(:user, :devices, ['iPhone', 'iPad', 'iPod', 'iPoop']).should == 
+    fh.checkbox(:user, :devices, ['iPhone', 'iPad', 'iPod', 'iPoop']).should ==
       "<input checked=\"checked\" id=\"user_devices_iphone\" name=\"user[devices][]\" type=\"checkbox\" value=\"iPhone\" /><label for=\"user_devices_iphone\">iPhone</label> <input checked=\"checked\" id=\"user_devices_ipad\" name=\"user[devices][]\" type=\"checkbox\" value=\"iPad\" /><label for=\"user_devices_ipad\">iPad</label> <input id=\"user_devices_ipod\" name=\"user[devices][]\" type=\"checkbox\" value=\"iPod\" /><label for=\"user_devices_ipod\">iPod</label> <input id=\"user_devices_ipoop\" name=\"user[devices][]\" type=\"checkbox\" value=\"iPoop\" /><label for=\"user_devices_ipoop\">iPoop</label>"
   end
 end
@@ -102,7 +102,7 @@ describe "Sinatra::FormHelpers in app" do
     app.get '/label' do
       erb "<%= label :person, :first_name %>"
     end
-    
+
     get '/label'
     last_response.body.should == %q(<label for="person_first_name">First Name</label>)
   end
@@ -111,11 +111,11 @@ describe "Sinatra::FormHelpers in app" do
     app.get '/hello' do
       erb "<%= label :person, :first_name, 'Hello World'%>"
     end
-      
+
     get '/hello'
     last_response.body.should == %q(<label for="person_first_name">Hello World</label>)
   end
-  
+
   it 'renders an input tag type text without @params' do
     app.get '/text' do
       erb "<%= input :person, :first_name %>"
@@ -126,34 +126,61 @@ describe "Sinatra::FormHelpers in app" do
     last_response.body.should == %q(<input id="person_first_name" name="person[first_name]" type="text" />)
   end
 
+  it 'accepts an input tag with custom type option' do
+    app.get '/input-with-custom-type' do
+      erb "<%= input :person, :password, type: 'password' %>"
+    end
+
+    get '/input-with-custom-type'
+    last_response.body.should == '<input id="person_password" name="person[password]" type="password" />'
+  end
+
   it 'renders an input tag type text with single arg' do
     app.get '/q' do
       erb "<%= input :q %>"
     end
-  
+
     get '/q'
     last_response.body.should == %q(<input id="q" name="q" type="text" />)
   end
-  
+
   it 'renders an input tag type text with @params' do
     app.get '/tom' do
       @params = { :person => {"first_name" => "Tom"}}
       erb "<%= input :person, :first_name %>"
     end
-        
+
     get '/tom'
     last_response.body.should == %q(<input id="person_first_name" name="person[first_name]" type="text" value="Tom" />)
   end
-  
+
+  it 'renders a password tag type password' do
+    app.get '/password' do
+      erb "<%= password :person, :password %>"
+    end
+
+    get '/password'
+    last_response.body.should == '<input id="person_password" name="person[password]" type="password" />'
+  end
+
+  it 'renders a button tag type button' do
+    app.get '/button' do
+      erb "<%= button :new %>"
+    end
+
+    get '/button'
+    last_response.body.should == '<input id="button_new" name="button" type="button" value="new" />'
+  end
+
   it 'renders an textarea tag type text without @params' do
     app.get '/notes' do
       erb "<%= textarea :person, :notes %>"
     end
-    
+
     get '/notes?person[notes]=Yeppers'
     last_response.body.should == %q(<textarea id="person_notes" name="person[notes]">Yeppers</textarea>)
   end
-  
+
   it 'renders a textarea tag with @params' do
     app.get '/notes2' do
       @params = { :person => {"notes" => "This is a note"}}
@@ -163,12 +190,12 @@ describe "Sinatra::FormHelpers in app" do
     get '/notes2'
     last_response.body.should == %q(<textarea id="person_notes" name="person[notes]">This is a note</textarea>)
   end
-  
+
   it 'renders a textarea tag with @params' do
     app.get '/img' do
       erb "<%= image '/images/hello.png', :alt => 'Lolcatz' %>"
     end
-    
+
     get '/img'
     last_response.body.should == '<img alt="Lolcatz" src="/images/hello.png" />'
   end
@@ -177,25 +204,25 @@ describe "Sinatra::FormHelpers in app" do
     app.get '/sub' do
       erb "<%= submit 'Create' %>"
     end
-    
+
     get '/sub'
     last_response.body.should == '<input id="button_create" name="submit" type="submit" value="Create" />'
   end
-  
+
   it 'renders an input tag with a submit type with zero args' do
     app.get '/create' do
       erb "<%= submit %>"
     end
-    
+
     get '/create'
     last_response.body.should == '<input id="button_submit" name="submit" type="submit" value="Submit" />'
   end
-  
+
   it 'renders an input tag with a checkbox type' do
     app.get '/check' do
       erb "<%= checkbox :person, :active, 'Yes' %>"
     end
-    
+
     get '/check'
     last_response.body.should ==
       '<input id="person_active_yes" name="person[active]" type="checkbox" value="Yes" /><label for="person_active_yes">Yes</label>'
@@ -229,39 +256,48 @@ describe "Sinatra::FormHelpers in app" do
     app.get '/select' do
       erb "<%= select :person, :relationship, ['Friend','CoWorker','Lead'] %>"
     end
-    
+
     get '/select'
     last_response.body.should == '<select id="person_relationship" name="person[relationship]">' +
-      '<option value="Friend">Friend</option><option value="CoWorker">CoWorker</option>' + 
+      '<option value="Friend">Friend</option><option value="CoWorker">CoWorker</option>' +
       '<option value="Lead">Lead</option></select>'
   end
-  
+
   it 'renders a select tag with selected option' do
     app.get '/select2' do
       @params = { :person => {"relationship" => "CoWorker"}}
       erb "<%= select :person, :relationship, ['Friend','CoWorker','Lead'] %>"
     end
-    
+
     get '/select2'
     last_response.body.should == '<select id="person_relationship" name="person[relationship]">' +
-      '<option value="Friend">Friend</option><option selected="selected" value="CoWorker">CoWorker</option>' + 
+      '<option value="Friend">Friend</option><option selected="selected" value="CoWorker">CoWorker</option>' +
       '<option value="Lead">Lead</option></select>'
   end
-  
+
+  it 'renders a hidden tag with single arg' do
+    app.get '/hidden' do
+      erb "<%= hidden :q %>"
+    end
+
+    get '/hidden'
+    last_response.body.should == %q(<input id="q" name="q" type="hidden" />)
+  end
+
   it 'renders a hidden tag with value' do
-    app.get '/hidden' do 
+    app.get '/hidden2' do
       erb '<%= hidden :person, :id, :value => 1 %>'
     end
-    
-    get '/hidden'
+
+    get '/hidden2'
     last_response.body.should == '<input id="person_id" name="person[id]" type="hidden" value="1" />'
   end
-  
+
   it 'renders a form tag' do
     app.get '/form' do
       erb "<%= form :person, :create %>"
     end
-      
+
     get '/form'
     last_response.body.should == %q(<form action="/person" method="POST">)
   end
@@ -276,7 +312,7 @@ describe "Sinatra::FormHelpers in app" do
 # <% end %>
 # EndTemplate
 #     end
-#       
+#
 #     get '/form_for'
 #     last_response.body.should == %q(<form action="/person" method="POST">)
 #   end

@@ -37,11 +37,11 @@ end
 #   @app ||= Class.new Sinatra::Base
 #   Rack::Lint.new @app
 # end
-# 
+#
 # def app=(base)
 #   @app = base
 # end
-# 
+#
 # def mock_app(base = Sinatra::Base, &block)
 #   inner = nil
 #   @app  = Sinatra.new(base) do

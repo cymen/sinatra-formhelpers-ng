@@ -3,13 +3,13 @@ module Sinatra
     # FormHelpers are a suite of helper methods
     # built to make building forms in Sinatra
     # a breeze.
-    # 
+    #
     # link "jackhq", "http://www.jackhq.com"
-    # 
+    #
     # label :person, :first_name
     # input :person, :first_name
     # textarea :person, :notes
-    # 
+    #
     # etc.
     def form(action, method=:get, options={}, &block)
       method_input = ''
@@ -34,10 +34,10 @@ module Sinatra
       out = yield Fieldset.new(self, obj)
       '<fieldset>' + (legend.nil? ? '' : "<legend>#{fast_escape_html(legend)}</legend>") + out + '</fieldset>'
     end
-    
+
     # Link to a URL
     def link(content, href=content, options={})
-      tag :a, content, options.merge(:href => href)  
+      tag :a, content, options.merge(:href => href)
     end
 
     # Link to an image
@@ -54,7 +54,8 @@ module Sinatra
     def input(obj, field=nil, options={})
       value = param_or_default(obj, field, options[:value])
       single_tag :input, options.merge(
-        :type => "text", :id => css_id(obj, field),
+        :type => options[:type] || "text",
+        :id => css_id(obj, field),
         :name => field.nil? ? obj : "#{obj}[#{field}]",
         :value => value
       )
@@ -62,12 +63,7 @@ module Sinatra
 
     # Form password input.  Specify the value as :value => 'foo'
     def password(obj, field=nil, options={})
-      value = param_or_default(obj, field, options[:value])
-      single_tag :input, options.merge(
-        :type => "password", :id => css_id(obj, field),
-        :name => field.nil? ? obj : "#{obj}[#{field}]",
-        :value => value
-      )
+      input(obj, field, options.merge(:type => 'password'))
     end
 
     # Form textarea box.
@@ -111,10 +107,10 @@ module Sinatra
         (labs.nil? || labs == true ? label(obj, "#{field}_#{id.to_s.downcase}", text) : '')
       end.join(join)
     end
-    
+
     # Form radio input.  Specify an array of values to get a radio group.
     def radio(obj, field, values, options={})
-      #content = @params[obj] && @params[obj][field.to_s] == value ? "true" : ""    
+      #content = @params[obj] && @params[obj][field.to_s] == value ? "true" : ""
       # , :checked => content
       join = options.delete(:join) || ' '
       labs = options.delete(:label)
@@ -140,33 +136,32 @@ module Sinatra
       end
       tag :select, content, options.merge(:id => css_id(obj, field), :name => "#{obj}[#{field}]")
     end
-    
+
     # Form hidden input.  Specify value as :value => 'foo'
-    def hidden(obj, field="", options={})
-      content = param_or_default(obj, field, options[:value])
-      single_tag :input, options.merge(:type => "hidden", :id => css_id(obj, field), :name => "#{obj}[#{field}]")      
+    def hidden(obj, field = nil, options = {})
+      input(obj, field, options.merge(:type => 'hidden'))
     end
-    
+
     # Standard open and close tags
     # EX : tag :h1, "shizam", :title => "shizam"
     # => <h1 title="shizam">shizam</h1>
     def tag(name, content, options={})
       "<#{name.to_s}" +
-        (options.length > 0 ? " #{hash_to_html_attrs(options)}" : '') + 
+        (options.length > 0 ? " #{hash_to_html_attrs(options)}" : '') +
         (content.nil? ? '>' : ">#{content}</#{name}>")
     end
-    
+
     # Standard single closing tags
     # single_tag :img, :src => "images/google.jpg"
     # => <img src="images/google.jpg" />
     def single_tag(name, options={})
       "<#{name.to_s} #{hash_to_html_attrs(options)} />"
     end
-    
+
     def fast_escape_html(text)
       text.to_s.gsub(/\&/,'&amp;').gsub(/\"/,'&quot;').gsub(/>/,'&gt;').gsub(/</,'&lt;')
     end
-    
+
     def titleize(text)
       text.to_s.gsub(/_+/, ' ').gsub(/\b('?[a-z])/) { $1.capitalize }
     end
@@ -195,7 +190,7 @@ module Sinatra
         [val, val]
       end
     end
-    
+
     def css_id(*things)
       things.compact.map{|t| t.to_s}.join('_').downcase.gsub(/\W/,'_')
     end
