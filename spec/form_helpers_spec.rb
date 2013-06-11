@@ -32,13 +32,13 @@ describe "Sinatra::FormHelpers methods" do
   end
   it 'renders a form tag (3)' do
     fh.form("/people", :create).should ==
-      '<form action="/people" method="POST">'
+      '<form action="/people" method="POST"><input type="hidden" name="_method" value="create" />'
   end
   it 'renders a nested form tag' do
     fh.form(:person, :create) do |f|
       # f.input(:first_name)
       f.input(:last_name)
-    end.should == '<form action="/person" method="POST"><fieldset>' +
+    end.should == '<form action="/person" method="POST"><input type="hidden" name="_method" value="create" /><fieldset>' +
       # '<input id="person_first_name" name="person[first_name]" type="text" />' +
       '<input id="person_last_name" name="person[last_name]" type="text" />' +
       '</fieldset></form>'
