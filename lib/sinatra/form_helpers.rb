@@ -45,7 +45,7 @@ module Sinatra
 
     # Form field label
     def label(obj, field, display = "", options={})
-      tag :label, (display.nil? || display == '') ? titleize(field.to_s) : display, options.merge(:for => "#{obj}_#{field}")
+      tag :label, (display.nil? || display == '') ? titleize(field.to_s) : display, options.merge(:for => css_id(obj, field))
     end
 
     # Form text input.  Specify the value as :value => 'foo'
