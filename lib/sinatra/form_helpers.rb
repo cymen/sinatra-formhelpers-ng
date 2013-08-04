@@ -101,7 +101,7 @@ module Sinatra
         id, text = id_and_text_from_value(val)
         single_tag(:input, options.merge(:type => "checkbox", :id => css_id(obj, field, id),
                                          :name => "#{obj}[#{field}]#{ary}", :value => id,
-                                         :checked => vals.include?(val) ? 'checked' : nil)) +
+                                         :checked => vals.include?(id) ? 'checked' : nil)) +
         (labs.nil? || labs == true ? label(obj, "#{field}_#{id.to_s.downcase}", text) : '')
       end.join(join)
     end
@@ -117,7 +117,7 @@ module Sinatra
         id, text = id_and_text_from_value(val)
         single_tag(:input, options.merge(:type => "radio", :id => css_id(obj, field, id),
                                          :name => "#{obj}[#{field}]", :value => id,
-                                         :checked => vals.include?(val) ? 'checked' : nil)) +
+                                         :checked => vals.include?(id) ? 'checked' : nil)) +
         (labs.nil? || labs == true ? label(obj, "#{field}_#{id.to_s.downcase}", text) : '')
       end.join(join)
     end
