@@ -1,6 +1,8 @@
 Sinatra::FormHelpers - Lightweight form helpers for Sinatra
 ===========================================================
 
+**IMPORTANT: THIS FORK IS NO LONGER MAINTAINED. You can find the maintained version of this gem [here](https://github.com/duijf/sinatra-formhelpers-ng).**
+
 This plugin adds lightweight (3-5 lines each) form helpers to Sinatra that aid with
 common form and HTML tags.
 
@@ -45,7 +47,7 @@ In your views, use these helpers to dynamically create form HTML elements.  Here
     </p>
 
     <%= form('/users', :post) %>
-    
+
     <%= input(:user, :first_name) %>
     <%= input(:user, :last_name) %>
 
